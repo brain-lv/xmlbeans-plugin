@@ -1,0 +1,106 @@
+plugins {
+    id 'java'
+}
+class XmlBeansPluginExtension {
+    String message = 'Hello from GreetingPlugin'
+}
+class XmlBeansPlugin implements Plugin<Project> {
+
+    void apply(Project project) {
+        def extension = project.extensions.create('xmlBeans', XmlBeansPluginExtension)
+        project.dependencies.add("compile", "org.apache.xmlbeans:xmlbeans:2.6.0")
+        def container = project.container(SourceSetContainer.class)
+        println container
+
+        project.getSourceSets().main.java.srcDirs = ["$project.projectDir/src/main/java","$project.projectDir/src/main/java-generated"]
+        project.getSourceSets().main.resources.srcDirs = ["$project.projectDir/src/main/resources","$project.projectDir/src/main/resources-generated"]
+
+        project.getSourceSets().create("xsd", {
+            java {
+                srcDir "$project.projectDir/src/main/java"
+                srcDir "$project.projectDir/src/xsd/java-generated"
+            }
+            resources {
+                srcDir "$project.projectDir/src/xsd/resources-generated"
+            }
+            compileClasspath += project.configurations.compile
+        })
+
+        project.task('buildSimpleSchema'){
+            doLast{
+                def configurations=project.configurations
+                ant.taskdef(
+                        name: "xmlbean",
+                        classname: "org.apache.xmlbeans.impl.tool.XMLBean",
+                        classpath: configurations.compile.asPath
+                )
+
+
+                ant.xmlbean(
+                        classpath: configurations.compile.asPath,
+                        srcgendir: "src/xsd/java-generated",
+                        classgendir: "build/classess/java/xsd"
+                ){
+                    fileset(dir: "src/xsd/schema"){
+                        include(name: "*.xsd")
+                    }
+                }
+            }
+        }
+
+        project.task('buildSchema'){
+            doLast{
+                def configurations=project.configurations
+                ant.taskdef(
+                        name: "xmlbean",
+                        classname: "org.apache.xmlbeans.impl.tool.XMLBean",
+                        classpath: configurations.compile.asPath
+                )
+
+
+                ant.xmlbean(
+                        classpath: configurations.compile.asPath,
+                        srconly: "true",
+                        srcgendir: "src/main/java-generated",
+                        classgendir: "src/main/resources-generated"
+                ){
+                    fileset(dir: ""){
+                        include(name: "src/xsd/schema/*.xsd")
+                    }
+                }
+
+
+            }
+        }
+
+        project.task('compileSchema') {
+            doLast {
+                println 'Hello from the GreetingPlugin' + extension.message
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: XmlBeansPlugin
+
+// Configure the extension using a DSL block
+xmlBeans {
+    message = 'Hi'
+}
+
+group 'lv.brain.xml'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+compileJava.dependsOn(buildSchema)
+buildSchema.dependsOn(compileXsdJava)
+compileXsdJava.dependsOn(buildSimpleSchema)
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
