@@ -5,31 +5,38 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.TaskAction;
 
+import java.io.File;
+
+import static lv.brain.gradle.xmlbeans.XmlbeansExtension.*;
+
 public class GenerateSourceFilesTask extends DefaultTask {
     public GenerateSourceFilesTask() {
         setGroup("xmlbeans");
     }
 
 
-
     @TaskAction
     public void generate() {
+        XmlbeansExtension config = getProject().getExtensions().getByType(XmlbeansExtension.class);
         JavaExec javaExec = getProject().getTasks().create("scomp", JavaExec.class);
-        javaExec.setGroup("xmlbeans");
+        javaExec.setGroup(GROUP);
         javaExec.getMainClass().set("org.apache.xmlbeans.impl.tool.SchemaCompiler");
+
+        File file = config.getSchemaFileLocation();
+        File file1 = config.getSchemaConfigFileLocation();
 
         Configuration runtimeClasspath = getProject().getConfigurations().getByName("runtimeClasspath");
         javaExec.classpath(runtimeClasspath);
         javaExec.args(
-                "-src", getProject().file("src/main/java-generated"),
-                "-d", getProject().file("src/main/resources-generated"),
+                "-src", getProject().file(PATH_SRC_MAIN_JAVA_GENERATED),
+                "-d", getProject().file(PATH_SRC_MAIN_RESOURCES_GENERATED),
                 "-srconly",
-                getProject().file("src/xsd/schema/" + getProject().getExtensions().getByType(XmlbeansExtension.class).getSchema()),
-                getProject().file("src/xsd/config/" + getProject().getExtensions().getByType(XmlbeansExtension.class).getConfig())
+                file,
+                file1
 
         );
 
-        javaExec.systemProperty("user.dir", getProject().file("src/xsd/schema"));
+        javaExec.systemProperty("user.dir", getProject().file(PATH_XSD_SCHEMA));
         javaExec.exec();
     }
 }

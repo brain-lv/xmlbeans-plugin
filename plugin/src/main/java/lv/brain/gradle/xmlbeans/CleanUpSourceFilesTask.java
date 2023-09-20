@@ -1,17 +1,18 @@
 package lv.brain.gradle.xmlbeans;
 
-import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Delete;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
+import static lv.brain.gradle.xmlbeans.XmlbeansExtension.*;
+
 public class CleanUpSourceFilesTask extends Delete {
     public CleanUpSourceFilesTask() {
-        this.setGroup("xmlbeans");
+        this.setGroup(GROUP);
         this.setDelete(new HashSet<>(Arrays.asList(
-                getProject().file("/src/main/java-generated"),
-                getProject().file("/src/main/resources-generated")
+                getProject().file(PATH_SRC_MAIN_JAVA_GENERATED),
+                getProject().file(PATH_SRC_MAIN_RESOURCES_GENERATED)
         )));
     }
 }
