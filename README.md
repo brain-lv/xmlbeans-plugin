@@ -3,7 +3,7 @@
 ##   Overview
 This plugin is supposed to simplify execution of https://xmlbeans.apache.org to generate java code for XML usa
 It automatically ads plugin java-library to project where is used this plugin.
-Currently plugin automaticly links project with xmlbeans 3.1.0, but we are working to allow project to decide, which xmlbeans version to use.
+Currently plugin automatically links project with xmlbeans 3.1.0, but we are working to allow project to decide, which xmlbeans version to use.
 
 ## Requirements
 

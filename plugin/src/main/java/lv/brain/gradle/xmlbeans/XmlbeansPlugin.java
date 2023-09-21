@@ -4,6 +4,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -79,12 +80,13 @@ public class XmlbeansPlugin implements Plugin<Project> {
     }
 
     private static boolean isHasXmlBeans(Project project) {
-        DependencyHandler dependencies = project.getDependencies();
         // Check all configurations for xmlbeans dependency
-        for (Dependency dependency : project.getConfigurations().detachedConfiguration(dependencies.create("xmlbeans")).getAllDependencies()) {
-            if (dependency.getGroup() != null && dependency.getGroup().contains("xmlbeans") ||
-                    dependency.getName().contains("xmlbeans")) {
-                return true;
+        for (Configuration configuration : project.getConfigurations()) {
+            for (Dependency dependency : configuration.getAllDependencies()) {
+                if (dependency.getGroup() != null && dependency.getGroup().contains("xmlbeans") ||
+                        dependency.getName().contains("xmlbeans")) {
+                    return true;
+                }
             }
         }
         return false;
@@ -117,7 +119,5 @@ public class XmlbeansPlugin implements Plugin<Project> {
                 project.file(PATH_XSD_SCHEMA),
                 project.file(PATH_XSD_SCHEMA_CONFIG)
         ));
-
-        project.getDependencies().add("implementation", "com.github.javaparser:javaparser-symbol-solver-core:3.+");
     }
 }

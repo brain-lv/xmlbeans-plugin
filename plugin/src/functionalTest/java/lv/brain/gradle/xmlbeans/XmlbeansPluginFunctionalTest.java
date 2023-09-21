@@ -47,7 +47,10 @@ class XmlbeansPluginFunctionalTest {
                                     "xsd{\n" +
                                     "    schema \"test.xsd\"\n" +
                                     "    config \"test.xsdconfig\"\n" +
-                                    "}\n");
+                                    "}\n" +
+                                    "dependencies{" +
+                                    "  api \"org.apache.xmlbeans:xmlbeans:3.1.0\"" +
+                                    "}");
         runner.withProjectDir(projectDir);
         writeString(getXSDConfigFile(), "<xb:config xmlns:xb=\"http://xml.apache.org/xmlbeans/2004/02/xbean/config\">\n" +
                                         "  <xb:namespace uri=\"http://xml.apache.org/xmlbeans/2004/02/xbean/config\">\n" +
