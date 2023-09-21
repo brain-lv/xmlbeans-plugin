@@ -11,12 +11,13 @@ import java.io.File;
  * </p>
  * <p>
  * <b>Example Usage in build.gradle:</b>
+ * </p>
  * <pre>{@code
  * xsd {
- *     // Your XMLBeans specific configurations here
+ *     schema "schema.xsd"
+ *     config "default.xsdconfig"
  * }
  * }</pre>
- * </p>
  */
 public class XmlbeansExtension {
     public static final String GROUP = "xmlbeans";
