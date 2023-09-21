@@ -53,11 +53,11 @@ public class XmlbeansPlugin implements Plugin<Project> {
 
         if (hasError) {
             errorMessage.append("\nPlease correct the above issues. Here's a sample configuration:\n");
-            errorMessage.append("xsd{\n\s\sschema \"")
+            errorMessage.append("xsd{\n  schema \"")
                     .append(config.getSchema())
                     .append("\"").
                     append("\n")
-                    .append("\s\sconfig \"")
+                    .append("  config \"")
                     .append(config.getConfig())
                     .append("\"")
                     .append("\n")

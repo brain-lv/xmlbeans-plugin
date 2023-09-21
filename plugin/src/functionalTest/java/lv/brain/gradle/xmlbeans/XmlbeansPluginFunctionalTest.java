@@ -3,21 +3,20 @@
  */
 package lv.brain.gradle.xmlbeans;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.util.Arrays;
-
-import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.io.TempDir;
-import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A simple functional test for the 'lv.brain.gradle.xmlbeans.greeting' plugin.
@@ -31,70 +30,63 @@ class XmlbeansPluginFunctionalTest {
     static final GradleRunner runner = GradleRunner.create()
             .forwardOutput()
             .withPluginClasspath()
-            .withDebug(true)
-            ;
+            .withDebug(true);
 
 
     @BeforeAll
     static void beforeAll() throws IOException {
         writeString(getSettingsFile(), "");
-        writeString(getBuildFile(), """
-                        plugins {
-                          id('java')
-                          id('java-library')
-                          id('lv.brain.gradle.xmlbeans')
-                        }
-                        repositories {
-                            mavenCentral()
-                        }
-                        xsd{
-                            schema "test.xsd"
-                            config "test.xsdconfig"
-                        }
-                        """);
+        writeString(getBuildFile(), "plugins {\n" +
+                                    "  id('java')\n" +
+                                    "  id('java-library')\n" +
+                                    "  id('lv.brain.gradle.xmlbeans')\n" +
+                                    "}\n" +
+                                    "repositories {\n" +
+                                    "    mavenCentral()\n" +
+                                    "}\n" +
+                                    "xsd{\n" +
+                                    "    schema \"test.xsd\"\n" +
+                                    "    config \"test.xsdconfig\"\n" +
+                                    "}\n");
         runner.withProjectDir(projectDir);
-        writeString(getXSDConfigFile(), """
-                <xb:config xmlns:xb="http://xml.apache.org/xmlbeans/2004/02/xbean/config">
-                  <xb:namespace uri="http://xml.apache.org/xmlbeans/2004/02/xbean/config">
-                    <xb:package>lv.brain.test</xb:package>
-                  </xb:namespace>
-                </xb:config>
-                """);
-        writeString(getXSDFile(), """
-                <?xml version="1.0" encoding="UTF-8" ?>
-                <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-                                
-                <xs:element name="shiporder">
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element name="orderperson" type="xs:string"/>
-                      <xs:element name="shipto">
-                        <xs:complexType>
-                          <xs:sequence>
-                            <xs:element name="name" type="xs:string"/>
-                            <xs:element name="address" type="xs:string"/>
-                            <xs:element name="city" type="xs:string"/>
-                            <xs:element name="country" type="xs:string"/>
-                          </xs:sequence>
-                        </xs:complexType>
-                      </xs:element>
-                      <xs:element name="item" maxOccurs="unbounded">
-                        <xs:complexType>
-                          <xs:sequence>
-                            <xs:element name="title" type="xs:string"/>
-                            <xs:element name="note" type="xs:string" minOccurs="0"/>
-                            <xs:element name="quantity" type="xs:positiveInteger"/>
-                            <xs:element name="price" type="xs:decimal"/>
-                          </xs:sequence>
-                        </xs:complexType>
-                      </xs:element>
-                    </xs:sequence>
-                    <xs:attribute name="orderid" type="xs:string" use="required"/>
-                  </xs:complexType>
-                </xs:element>
-                                
-                </xs:schema>
-                """);
+        writeString(getXSDConfigFile(), "<xb:config xmlns:xb=\"http://xml.apache.org/xmlbeans/2004/02/xbean/config\">\n" +
+                                        "  <xb:namespace uri=\"http://xml.apache.org/xmlbeans/2004/02/xbean/config\">\n" +
+                                        "    <xb:package>lv.brain.test</xb:package>\n" +
+                                        "  </xb:namespace>\n" +
+                                        "</xb:config>\n");
+        writeString(getXSDFile(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
+                                  "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n" +
+                                  "\n" +
+                                  "<xs:element name=\"shiporder\">\n" +
+                                  "  <xs:complexType>\n" +
+                                  "    <xs:sequence>\n" +
+                                  "      <xs:element name=\"orderperson\" type=\"xs:string\"/>\n" +
+                                  "      <xs:element name=\"shipto\">\n" +
+                                  "        <xs:complexType>\n" +
+                                  "          <xs:sequence>\n" +
+                                  "            <xs:element name=\"name\" type=\"xs:string\"/>\n" +
+                                  "            <xs:element name=\"address\" type=\"xs:string\"/>\n" +
+                                  "            <xs:element name=\"city\" type=\"xs:string\"/>\n" +
+                                  "            <xs:element name=\"country\" type=\"xs:string\"/>\n" +
+                                  "          </xs:sequence>\n" +
+                                  "        </xs:complexType>\n" +
+                                  "      </xs:element>\n" +
+                                  "      <xs:element name=\"item\" maxOccurs=\"unbounded\">\n" +
+                                  "        <xs:complexType>\n" +
+                                  "          <xs:sequence>\n" +
+                                  "            <xs:element name=\"title\" type=\"xs:string\"/>\n" +
+                                  "            <xs:element name=\"note\" type=\"xs:string\" minOccurs=\"0\"/>\n" +
+                                  "            <xs:element name=\"quantity\" type=\"xs:positiveInteger\"/>\n" +
+                                  "            <xs:element name=\"price\" type=\"xs:decimal\"/>\n" +
+                                  "          </xs:sequence>\n" +
+                                  "        </xs:complexType>\n" +
+                                  "      </xs:element>\n" +
+                                  "    </xs:sequence>\n" +
+                                  "    <xs:attribute name=\"orderid\" type=\"xs:string\" use=\"required\"/>\n" +
+                                  "  </xs:complexType>\n" +
+                                  "</xs:element>\n" +
+                                  "\n" +
+                                  "</xs:schema>\n");
     }
 
     private static File getBuildFile() {
@@ -113,7 +105,8 @@ class XmlbeansPluginFunctionalTest {
         return new File(projectDir, "/src/xsd/schema/test.xsd");
     }
 
-    @Test void canRunTask() throws IOException {
+    @Test
+    void canRunTask() {
         BuildResult result = runner.withArguments("build").build();
 
         // Verify the result
